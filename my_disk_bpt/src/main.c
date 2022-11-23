@@ -2,6 +2,7 @@
 
 int split_count;
 int merge_count;
+int move_count;
 
 int main(){
     int64_t input;
@@ -37,6 +38,7 @@ int main(){
             case 'c':
                 printf("split_count: %d\n",split_count);
                 printf("merger_count: %d\n",merge_count);
+                printf("move_count: %d\n",move_count);
                 break;   
 
         }

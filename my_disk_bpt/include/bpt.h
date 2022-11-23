@@ -53,6 +53,7 @@ extern H_P * hp;
 
 extern int split_count;
 extern int merge_count;
+extern int move_count;
 
 // FUNCTION PROTOTYPES.
 int open_table(char * pathname);

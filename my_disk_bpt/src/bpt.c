@@ -8,6 +8,7 @@ int fd = -1; //fd is declared as global
 
 int split_count;
 int merge_count;
+int move_count;
 
 H_P * load_header(off_t off) {
     H_P * newhp = (H_P*)calloc(1, sizeof(H_P));
@@ -821,6 +822,8 @@ void move_right(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index,
     page *neighbor = load_page(neighbor_off);
     page *parent = load_page(parent_off);
 
+    move_count++;
+
     for(int i = neighbor->num_of_keys + amount - 1; i >= amount; i--)
         neighbor->records[i] = neighbor->records[i - amount];
 
@@ -839,7 +842,6 @@ void move_right(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index,
     free(leaf);
     free(neighbor);
     free(parent);
-    printf("move right\n");
     return;
 
 }
@@ -848,6 +850,8 @@ void move_left(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, 
     page *leaf = load_page(leaf_off);
     page *neighbor = load_page(neighbor_off);
     page *parent = load_page(parent_off);
+
+    move_count++;
 
     for(int i = 0; i < amount ; i++) {
         neighbor->records[neighbor->num_of_keys + i] = leaf->records[i];
@@ -867,7 +871,6 @@ void move_left(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, 
     free(leaf);
     free(neighbor);
     free(parent);
-    printf("move left\n");
     return;
 
 }
