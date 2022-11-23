@@ -64,7 +64,7 @@ void move_right(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index,
     free(leaf);
     free(neighbor);
     free(parent);
-    printf("move right\n");
+    
     return;
 
 }
@@ -92,7 +92,7 @@ void move_left(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, 
     free(leaf);
     free(neighbor);
     free(parent);
-    printf("move left\n");
+
     return;
 
 }
