@@ -85,6 +85,10 @@ void adjust_root(off_t deloff);
 void remove_entry_from_page(int64_t key, off_t deloff);
 void usetofree(off_t wbf);
 
+int move_records(off_t leaf_off);
+void move_right(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, int amount);
+void move_left(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, int amount);
+
 #endif /* __BPT_H__*/
 
 
