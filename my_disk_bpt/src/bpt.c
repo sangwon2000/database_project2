@@ -231,7 +231,7 @@ int db_insert(int64_t key, char * value) {
 
     page * leafp = load_page(leaf);
 
-    if (leafp->num_of_keys < LEAF_MAX && move_records(leaf)) {
+    if (leafp->num_of_keys < LEAF_MAX || move_records(leaf)) {
         insert_into_leaf(leaf, nr);
         free(leafp);
         return 0;
