@@ -231,6 +231,7 @@ int db_insert(int64_t key, char * value) {
 
     page * leafp = load_page(leaf);
 
+    // if can move records to neighbor leaf node, move and make room
     if (leafp->num_of_keys < LEAF_MAX || move_records(leaf)) {
         insert_into_leaf(leaf, nr);
         free(leafp);
@@ -778,6 +779,9 @@ void remove_entry_from_page(int64_t key, off_t deloff) {
     
 }//fin
 
+// move records to neighbor leaf node.
+// if can move, return 1.
+// otherwise, return 0.
 int move_records(off_t leaf_off) {
     
     page *leaf = load_page(leaf_off);
@@ -787,8 +791,10 @@ int move_records(off_t leaf_off) {
     page *neighbor;
     int index = 0, flag = 0;
 
+    // if leaf node is root, can't move.
     if(hp->rpo == leaf_off) return 0;
 
+    // set flag, index and find neighbor leaf node.
     if(parent->next_offset == leaf_off) {
         flag = 1;
         neighbor_off = parent->b_f[0].p_offset;
@@ -800,6 +806,7 @@ int move_records(off_t leaf_off) {
         while(parent->b_f[index].p_offset != leaf_off) index ++;
         neighbor_off = parent->b_f[index - 1].p_offset;
     }
+
     neighbor = load_page(neighbor_off);
     int neighbor_num_of_keys = neighbor->num_of_keys; 
 
@@ -807,6 +814,7 @@ int move_records(off_t leaf_off) {
     free(parent);
     free(neighbor);
 
+    // if neighbor leaf node has no room to spare, can't move.
     int amount = (LEAF_MAX - neighbor_num_of_keys) / 2;
     if(amount == 0) return 0;
     
@@ -824,13 +832,16 @@ void move_right(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index,
 
     move_count++;
 
+    // make rooms.
     for(int i = neighbor->num_of_keys + amount - 1; i >= amount; i--)
         neighbor->records[i] = neighbor->records[i - amount];
 
+    // move records.
     for(int i = 0; i < amount ; i++) {
         neighbor->records[i] = leaf->records[leaf->num_of_keys - amount + i];
     }
 
+    // set parent's key.
     parent->b_f[index].key = neighbor->records[0].key;
     leaf->num_of_keys -= amount;
     neighbor->num_of_keys += amount;
@@ -853,13 +864,16 @@ void move_left(off_t leaf_off, off_t neighbor_off, off_t parent_off, int index, 
 
     move_count++;
 
+    // move records.
     for(int i = 0; i < amount ; i++) {
         neighbor->records[neighbor->num_of_keys + i] = leaf->records[i];
     }
 
+    // remove rooms.
     for(int i = 0; i < leaf->num_of_keys - amount; i++)
        leaf->records[i] = leaf->records[amount + i];
 
+    // set parent's key.
     parent->b_f[index].key = leaf->records[0].key;
     leaf->num_of_keys -= amount;
     neighbor->num_of_keys += amount;
